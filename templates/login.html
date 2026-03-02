@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+
+    <div class="glass-card p-5" style="width:420px;">
+
+        <h3 class="text-center mb-4 page-title">Welcome Back</h3>
+
+        <div id="message"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email"
+                   id="email"
+                   class="form-control"
+                   placeholder="Enter your email"
+                   required>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Password</label>
+            <input type="password"
+                   id="password"
+                   class="form-control"
+                   placeholder="Enter your password"
+                   required>
+        </div>
+
+        <button type="button"
+                class="btn btn-premium w-100"
+                onclick="login()">
+            Login
+        </button>
+
+        <div class="text-center mt-4">
+            <a href="/register"
+               class="text-decoration-none text-light">
+                Don't have an account?
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function login()
+{
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if(!email || !password)
+    {
+        alert("Please enter email and password");
+        return;
+    }
+
+    try
+    {
+
+        const response = await fetch("/api/auth/login",
+        {
+            method: "POST",
+
+            headers:
+            {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(
+            {
+                email: email,
+                password: password
+            })
+        });
+
+
+        const data = await response.json();
+
+
+        if(!response.ok)
+        {
+            alert(data.error || "Login failed");
+            return;
+        }
+
+
+        // SAVE TOKEN
+        localStorage.setItem("token", data.access_token);
+
+
+        // ROLE BASED REDIRECT
+        if(data.role === "admin")
+        {
+            window.location.href = "/admin/dashboard";
+        }
+        else if(data.role === "seller")
+        {
+            window.location.href = "/seller/dashboard";
+        }
+        else if(data.role === "buyer")
+        {
+            window.location.href = "/buyer/dashboard";
+        }
+        else
+        {
+            window.location.href = "/";
+        }
+
+    }
+    catch(error)
+    {
+        console.error(error);
+        alert("Server error. Try again.");
+    }
+
+}
+
+</script>
+
+{% endblock %}

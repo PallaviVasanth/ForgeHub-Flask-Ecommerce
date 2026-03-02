@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+
+    <div class="glass-card p-5" style="width:450px;">
+
+        <h3 class="text-center mb-4 page-title">Create Account</h3>
+
+        <div id="message" class="mb-3"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Enter username">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="Enter email">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter password">
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label">Role</label>
+            <select id="role" class="form-select">
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+            </select>
+        </div>
+
+        <button type="button" class="btn btn-premium w-100" onclick="registerUser()">
+            Register
+        </button>
+
+        <div class="text-center mt-4">
+            <a href="/login" class="text-decoration-none text-light">
+                Already have an account?
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+function registerUser() {
+
+    var username = document.getElementById("username").value.trim();
+    var email = document.getElementById("email").value.trim();
+    var password = document.getElementById("password").value.trim();
+    var role = document.getElementById("role").value;
+
+    if (!username || !email || !password) {
+        showMessage("All fields are required.", "danger");
+        return;
+    }
+
+    fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username: username,
+            email: email,
+            password: password,
+            role: role
+        })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+
+        if (data.error) {
+            showMessage(data.error, "danger");
+            return;
+        }
+
+        showMessage(data.message, "success");
+
+        if (data.message.indexOf("Await admin approval") === -1) {
+            setTimeout(function() {
+                window.location.href = "/login";
+            }, 2000);
+        }
+
+    })
+    .catch(function() {
+        showMessage("Something went wrong.", "danger");
+    });
+}
+
+function showMessage(message, type) {
+    document.getElementById("message").innerHTML =
+        "<div class='alert alert-" + type + "'>" + message + "</div>";
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="mb-0">🛒 My Cart</h2>
+
+        <!-- BACK TO MARKETPLACE BUTTON -->
+        <a href="/products/marketplace"
+           class="btn btn-outline-light">
+           ← Continue Shopping
+        </a>
+
+    </div>
+
+    <div id="cartItems"></div>
+
+
+    <!-- TOTAL SECTION -->
+    <div class="card mt-4 p-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h4>
+                Total: ₹ <span id="cartTotal">0</span>
+            </h4>
+
+            <button onclick="checkout()"
+                    class="btn btn-success">
+                Proceed to Checkout
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const token = localStorage.getItem("token");
+
+if (!token)
+{
+    window.location.href = "/login";
+}
+
+
+// LOAD CART
+function loadCart()
+{
+    fetch("/api/cart",
+    {
+        headers:
+        {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(res => res.json())
+    .then(data =>
+    {
+        const container = document.getElementById("cartItems");
+
+        container.innerHTML = "";
+
+        let total = 0;
+
+
+        // CART EMPTY UI
+        if(data.length === 0)
+        {
+            container.innerHTML = `
+
+                <div class="card p-4 text-center">
+
+                    <h5 class="mb-3">
+                        Your cart is empty
+                    </h5>
+
+                    <a href="/products/marketplace"
+                       class="btn btn-primary">
+                       Browse Marketplace
+                    </a>
+
+                </div>
+
+            `;
+
+            document.getElementById("cartTotal").innerText = 0;
+
+            return;
+        }
+
+
+        // CART ITEMS UI
+        data.forEach(item =>
+        {
+            total += item.total;
+
+            container.innerHTML += `
+            
+            <div class="card mb-3 p-3">
+
+                <div class="row align-items-center">
+
+                    <div class="col-md-2">
+
+                        <img src="${item.image_url || 'https://via.placeholder.com/100'}"
+                             style="width:100%; border-radius:8px;">
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <h5>${item.title}</h5>
+
+                        <small>
+                            ₹${item.price} each
+                        </small>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <button onclick="changeQty(${item.id}, -1)"
+                                class="btn btn-sm btn-outline-light">
+                            −
+                        </button>
+
+                        <span class="mx-2">
+                            ${item.quantity}
+                        </span>
+
+                        <button onclick="changeQty(${item.id}, 1)"
+                                class="btn btn-sm btn-outline-light">
+                            +
+                        </button>
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        ₹${item.total}
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <button onclick="removeItem(${item.id})"
+                                class="btn btn-danger btn-sm">
+                            Remove
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+        });
+
+        document.getElementById("cartTotal").innerText = total;
+
+    });
+}
+
+
+
+// REMOVE ITEM
+function removeItem(itemId)
+{
+    fetch("/api/cart/remove/" + itemId,
+    {
+        method: "DELETE",
+
+        headers:
+        {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(() =>
+    {
+        loadCart();
+    });
+}
+
+
+
+// CHANGE QUANTITY
+function changeQty(itemId, change)
+{
+    fetch("/api/cart/update/" + itemId,
+    {
+        method: "POST",
+
+        headers:
+        {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            change: change
+        })
+    })
+    .then(() =>
+    {
+        loadCart();
+    });
+}
+
+
+
+// CHECKOUT
+function checkout()
+{
+    fetch("/api/cart/checkout",
+    {
+        method: "POST",
+
+        headers:
+        {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(res => res.json())
+    .then(data =>
+    {
+        alert("Order placed successfully");
+
+        loadCart();
+    });
+}
+
+
+loadCart();
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">User Dashboard</h2>
+
+    <div class="text-end mb-3">
+        <button class="btn btn-outline-danger" onclick="logout()">
+            Logout
+        </button>
+    </div>
+
+    <div id="products" class="row"></div>
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+
+// 🔐 If no token → go to login
+if (!token) {
+    window.location.href = "/login";
+}
+
+// 🔎 Get logged-in user info
+fetch("/api/auth/me", {
+    headers: {
+        "Authorization": "Bearer " + token
+    }
+})
+.then(res => res.json())
+.then(user => {
+
+    // 🚦 Role-based redirect
+    if (user.role === "admin") {
+        window.location.href = "/admin/dashboard";
+        return;
+    }
+
+    if (user.role === "seller") {
+        window.location.href = "/seller/dashboard";
+        return;
+    }
+
+    // 👇 If buyer, load products
+    loadProducts();
+})
+.catch(() => {
+    window.location.href = "/login";
+});
+
+
+// 📦 Load Products
+function loadProducts() {
+    fetch("/api/products/", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(response => response.json())
+    .then(products => {
+
+        const container = document.getElementById("products");
+        container.innerHTML = "";
+
+        // ✅ Prevent crash if backend returns error object
+        if (!Array.isArray(products)) {
+            alert(products.error || "Failed to load products");
+            return;
+        }
+
+        products.forEach(product => {
+            container.innerHTML += `
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm p-3">
+                        <h5>${product.title}</h5>
+                        <p>${product.description}</p>
+                        <p><strong>₹ ${product.price}</strong></p>
+                        <button class="btn btn-primary"
+                            onclick="buyProduct(${product.id})">
+                            Buy
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    })
+    .catch(() => {
+        alert("Failed to load products");
+    });
+}
+
+
+// 💳 Buy Product
+function buyProduct(productId) {
+    fetch(`/api/transactions/buy/${productId}`, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || data.error);
+    });
+}
+
+
+// 🚪 Logout
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+}
+</script>
+
+{% endblock %}

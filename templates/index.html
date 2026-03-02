@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:85vh;">
+
+    <div class="glass-card p-5 text-center" style="max-width:700px; width:100%;">
+
+        <h1 class="hero-title mb-3">ForgeHub</h1>
+
+        <p class="hero-subtitle mb-4">
+            API-First Digital Asset Marketplace<br>
+            Game Utilities • Dev Scripts • UI Components
+        </p>
+
+        <div id="ctaSection">
+            <!-- JS will insert correct button -->
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+const cta = document.getElementById("ctaSection");
+
+if (token) {
+    cta.innerHTML = `
+        <a href="/dashboard" class="btn btn-primary btn-lg">
+            Go to Dashboard
+        </a>
+    `;
+} else {
+    cta.innerHTML = `
+        <a href="/register" class="btn btn-primary btn-lg">
+            Get Started
+        </a>
+    `;
+}
+</script>
+
+{% endblock %}

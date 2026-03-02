@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Seller Dashboard</h2>
+
+        <button onclick="showAddForm()"
+                class="btn btn-success">
+            + Add Product
+        </button>
+    </div>
+
+    <!-- PINTEREST STYLE GRID -->
+    <div class="row" id="productList"></div>
+
+    <!-- ADD / EDIT PRODUCT FORM -->
+    <div id="addForm"
+         class="card p-4 mt-4"
+         style="display:none; background:#1e293b; color:white;">
+
+        <h4 id="formTitle">Add Product</h4>
+
+        <form id="productForm">
+
+            <input type="hidden" id="edit_id">
+
+            <input id="title"
+                   class="form-control mb-2"
+                   placeholder="Title"
+                   required>
+
+            <input id="description"
+                   class="form-control mb-2"
+                   placeholder="Description"
+                   required>
+
+            <input id="price"
+                   type="number"
+                   class="form-control mb-2"
+                   placeholder="Price"
+                   required>
+
+            <select id="category"
+                    class="form-select mb-2"
+                    required>
+
+                <option value="">Select Category</option>
+                <option value="Gadgets">Gadgets</option>
+                <option value="E-Books">E-Books</option>
+                <option value="Software">Software</option>
+                <option value="Courses">Courses</option>
+                <option value="Templates">Templates</option>
+                <option value="Other">Other</option>
+
+            </select>
+
+            <input id="image_url"
+                   class="form-control mb-3"
+                   placeholder="Image URL"
+                   required>
+
+            <div class="d-flex gap-2">
+
+                <button type="submit"
+                        class="btn btn-success w-100">
+                    Save Product
+                </button>
+
+                <button type="button"
+                        onclick="hideForm()"
+                        class="btn btn-secondary w-100">
+                    Cancel
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+const token = localStorage.getItem("token");
+
+// ================= LOAD PRODUCTS =================
+async function loadProducts()
+{
+    const res = await fetch("/api/products/seller/my-products",
+    {
+        headers:
+        {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    const products = await res.json();
+
+    if (!Array.isArray(products)) {
+        alert(products.error || "Failed to load products");
+        return;
+    }
+
+    let html = "";
+
+    products.forEach(p =>
+    {
+        html += `
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm"
+                 style="background:#1e293b; color:white; border-radius:12px;">
+
+                <img src="${p.image_url}"
+                     style="height:200px; object-fit:cover; border-radius:12px 12px 0 0;">
+
+                <div class="card-body">
+                    <h6>${p.title}</h6>
+                    <small class="text-info">${p.category}</small>
+                    <h5 class="mt-2 text-success">₹${p.price}</h5>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <button onclick="editProduct(${p.id}, '${p.title}', '${p.description}', '${p.price}', '${p.category}', '${p.image_url}')"
+                                class="btn btn-warning btn-sm w-100">
+                            Edit
+                        </button>
+
+                        <button onclick="deleteProduct(${p.id})"
+                                class="btn btn-danger btn-sm w-100">
+                            Delete
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
+    document.getElementById("productList").innerHTML = html;
+}
+
+
+// ================= SHOW FORM =================
+function showAddForm()
+{
+    document.getElementById("formTitle").innerText = "Add Product";
+    document.getElementById("edit_id").value = "";
+    document.getElementById("productForm").reset();
+    document.getElementById("addForm").style.display = "block";
+}
+
+
+// ================= HIDE FORM =================
+function hideForm()
+{
+    document.getElementById("addForm").style.display = "none";
+    document.getElementById("productForm").reset();
+    document.getElementById("edit_id").value = "";
+}
+
+
+// ================= DELETE PRODUCT =================
+async function deleteProduct(id)
+{
+    if(!confirm("Delete this product?")) return;
+
+    await fetch("/api/products/" + id,
+    {
+        method: "DELETE",
+        headers:
+        {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    loadProducts();
+}
+
+
+// ================= SAVE PRODUCT =================
+document.getElementById("productForm")
+.addEventListener("submit", async e =>
+{
+    e.preventDefault();
+
+    const editId = document.getElementById("edit_id").value;
+
+    const data =
+    {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        price: document.getElementById("price").value,
+        category: document.getElementById("category").value,
+        image_url: document.getElementById("image_url").value
+    };
+
+    let response;
+
+    if(editId)
+    {
+        response = await fetch("/api/products/" + editId,
+        {
+            method: "PUT",
+            headers:
+            {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify(data)
+        });
+    }
+    else
+    {
+        response = await fetch("/api/products/",
+        {
+            method: "POST",
+            headers:
+            {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify(data)
+        });
+    }
+
+    const result = await response.json();
+
+    if(response.ok)
+    {
+        alert(editId ? "Product updated" : "Product added");
+        hideForm();
+        loadProducts();
+    }
+    else
+    {
+        alert(result.error || "Something went wrong");
+    }
+});
+
+
+loadProducts();
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,316 @@
+/* ============================= */
+/* GLOBAL DARK LUXURY THEME */
+/* ============================= */
+
+body {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    min-height: 100vh;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* ============================= */
+/* NAVBAR */
+/* ============================= */
+
+.glass-nav {
+    background: rgba(15, 23, 42, 0.75) !important;
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ============================= */
+/* GLASS CARD */
+/* ============================= */
+
+.glass-card {
+    background: rgba(30, 41, 59, 0.6) !important;
+    backdrop-filter: blur(18px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    color: #e2e8f0;
+}
+
+/* REMOVE WHITE BOOTSTRAP CARD */
+.card {
+    background: rgba(30, 41, 59, 0.6) !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    color: #e2e8f0 !important;
+}
+
+/* ============================= */
+/* UNIVERSAL BUTTON SYSTEM */
+/* ============================= */
+
+/* PRIMARY BUTTON */
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    border: none;
+    color: #ffffff !important;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+/* SUCCESS BUTTON */
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: none;
+    color: #ffffff !important;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.btn-success:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+/* PREMIUM BUTTON (Optional) */
+.btn-premium {
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    border: none;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.25s ease;
+}
+
+.btn-premium:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+/* OUTLINE LIGHT BUTTON (Dark Mode) */
+.btn-outline-light {
+    border: 1px solid rgba(255,255,255,0.6);
+    color: #ffffff !important;
+    background: transparent;
+    transition: all 0.25s ease;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* OUTLINE LIGHT BUTTON (Light Mode Fix) */
+body.light-mode .btn-outline-light {
+    border: 1px solid #1e293b;
+    color: #1e293b !important;
+    background: transparent;
+}
+
+body.light-mode .btn-outline-light:hover {
+    background: rgba(30,41,59,0.1);
+}
+
+/* LIGHT MODE PRIMARY BUTTON (ensure contrast) */
+body.light-mode .btn-primary,
+body.light-mode .btn-success,
+body.light-mode .btn-premium {
+    color: #ffffff !important;
+}
+
+/* ============================= */
+/* FORM */
+/* ============================= */
+
+.form-control,
+.form-select {
+    background-color: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #fff !important;
+}
+
+.form-control:focus {
+    background-color: rgba(255,255,255,0.08) !important;
+    border-color: #6366f1 !important;
+    box-shadow: none !important;
+}
+
+/* ============================= */
+/* TABLE DARK OVERRIDE */
+/* ============================= */
+
+.table {
+    color: #e2e8f0 !important;
+    background-color: transparent !important;
+}
+
+/* VERY IMPORTANT FIX */
+.table > :not(caption) > * > * {
+    background-color: transparent !important;
+    color: #e2e8f0 !important;
+}
+
+/* REMOVE WHITE BORDERED TABLE */
+.table-bordered > :not(caption) > * {
+    border-color: rgba(255,255,255,0.1) !important;
+}
+
+.table thead {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(255,255,255,0.05) !important;
+}
+
+/* ============================= */
+/* TITLE */
+/* ============================= */
+
+.page-title {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ============================= */
+/* LIGHT MODE */
+/* ============================= */
+
+body.light-mode {
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    color: #1e293b;
+}
+
+body.light-mode .glass-card,
+body.light-mode .card {
+    background: rgba(255,255,255,0.85) !important;
+    color: #1e293b !important;
+}
+
+body.light-mode .glass-nav {
+    background: rgba(255,255,255,0.9) !important;
+}
+
+body.light-mode .nav-link {
+    color: #1e293b !important;
+}
+
+body.light-mode .table {
+    color: #1e293b !important;
+}
+
+body.light-mode .table > :not(caption) > * > * {
+    color: #1e293b !important;
+}
+
+/* ============================= */
+/* HERO TITLE & SUBTITLE FIX */
+/* ============================= */
+
+/* Project Main Title */
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Subtitle in DARK mode */
+.hero-subtitle {
+    color: #cbd5e1;   /* Soft light gray */
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+/* Subtitle in LIGHT mode */
+body.light-mode .hero-subtitle {
+    color: #475569;
+}
+
+.product-card {
+
+    border-radius: 12px;
+    transition: 0.3s ease;
+}
+
+.product-card:hover {
+
+    transform: translateY(-6px);
+}
+
+.product-card img {
+
+    height: 200px;
+    object-fit: cover;
+}
+
+/* ===========================
+   FIX DROPDOWN VISIBILITY
+   =========================== */
+
+select.form-select
+{
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+}
+
+/* dropdown list background */
+select.form-select option
+{
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+}
+
+/* hover option */
+select.form-select option:hover
+{
+    background-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+/* light mode fix */
+body.light-mode select.form-select
+{
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+body.light-mode select.form-select option
+{
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+/* =========================================
+   FIX INPUT TEXT VISIBILITY (DARK MODE)
+========================================= */
+
+.form-control,
+.form-select {
+    background-color: rgba(255,255,255,0.05) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,0.6) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: rgba(255,255,255,0.08) !important;
+    color: #ffffff !important;
+    border-color: #00ffa6 !important;
+    box-shadow: none !important;
+}
+
+
+/* Dropdown options visibility fix */
+select option {
+    background-color: #1e293b;
+    color: #ffffff;
+}
+
+
+/* Card text visibility */
+.card {
+    color: #ffffff;
+}
